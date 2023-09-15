@@ -1,0 +1,102 @@
+In this lesson, we are going to learn about scikit-learn to run a linear regression and
+Seaborn which is a popular data visualisation library built on top of matplotlib.
+Today, we will analyse movie budget dataset and want to build a relationship between the movie budget and its revenues.
+
+If we want to select a data on the basis of more than one condition.
+In order to make it possible, we can use .loc[] property.
+Syntax:- international_releases = data.loc[(data.USD_Domestic_Gross == 0) & 
+                                  (data.USD_Worldwide_Gross != 0)]
+We can use "query()" method too to do the same.
+Syntax:- international_releases = data.query('USD_Domestic_Gross == 0 and USD_Worldwide_Gross != 0')
+
+To use Seaborn, we first need to import it.
+Syntax:- import seaborn as sns
+To create a scatter plot on seaborn on plot. We need to use scatterplot().
+To create it, we need to provide data such as dataframe and column values.
+Syntax:- sns.scatterplot(data=data_clean,
+                x='USD_Production_Budget', 
+                y='USD_Worldwide_Gross')
+We can use matplotlib methods too anytime as seaborn is built on top of matplotlib.
+We can change the figure of the plot.
+plt.figure(figsize=(8, 4), dpi=200)
+
+sns.scatterplot returns an axes object which can be used to set the limit on the ticks and labels of x-axis(xlim & xlabel) and y-axis(ylim & ylabel).
+
+To create a bubble chart, we are simply using seaborn because it provides "hue" and "size" parameters.
+"hue" parameter is used to set the color range of the bubbles. It takes column values to decide the range of colors.
+"size" parameter is used to set the size of the bubbles. It takes column values to decide the size of the bubbles.
+
+Here, we can use "with" block to set a temporary style to seaborn plot.
+Here, we are giving temporary style so, we can give style to a single chart and we don't want to affect all the charts in the notebook.
+
+DateTimeIndex is a specialized index used for time series data.
+Syntax:- years = pd.DatetimeIndex(data_clean["Release_Date"]).year
+Here, we are creating DateTimeIndex object from Release_Date column.
+Now, we are grabbing all the years from DateTimeIndex Object.
+DateTimeIndex is an 1 dimensional index that is similar to pandas regular Index.
+With the help of it, we can manipulate the index of time series data.
+
+Linear Regression
+Linear Regression is a statistical concept that is used to model the relationship between the dependent variable and one or more independent variables.
+It is a fundamental and widely used technique that is used in statistical and machine learning for understanding and making prediction based on data.
+The components and concepts that are associated with linear regression are:-
+1)Dependent and Independent variable:- Dependent:- This is the variable that we need to predict or explain.
+Independent:- This is the variable that is used to predict the dependent variable.
+2)Linear Equation:- In simple linear regression, only one independent variable is used.
+The relationship between independent and dependent variable is represented by straight line equation.
+Y = β0 + β1X
+Y represents dependent variable
+X represents independent variable
+β0 represents intercept(The value of Y when X is 0).
+β1 represents the slope(if we change the X value by 1 unit then how much variation will be in Y value.)
+Unit means in which terms our data is being measured. As, in this dataset we are dealing with $, then 1 unit = $1.
+So, if X value will be increased by $1 then, what amount of affect will be on Y value.
+
+plt.figure(figsize=(8, 4), dpi=200)
+Here, we are setting the dimension of figure
+with sns.axes_style("whitegrid"):
+Then we create a with block to set plotting style temporary to a chart with white background and gridlines.
+We do it, so it applies to only this chart rather than to all.
+sns.regplot(data=old_films, 
+            x='USD_Production_Budget', 
+            y='USD_Worldwide_Gross',
+            scatter_kws={'alpha': 0.4},
+            line_kws={'color': 'black'})
+Here, I am creating a scatter plot with regression line. The dataframe "old_films" providing data to the plot.
+scatter_kws keyword parameter is setting the transparency('alpha') level to 0.4 for the data points.
+line_kws keyword parameter is used to customize the regression line. Here, it sets the color to 'black'.
+If the data points on the scatter plot don't fit near around with the regression line then we can't predict and understand data.
+Due to this, we can't capture the relationship between the dependent and independent variable.
+If the data points on the scatter plot fit close to the regression line then we can predict and understand data at some amount.
+NOTE:- fitting means creating the best fitting line that describes the relationship between the dependent and independent variable.
+
+To do linear regression, we need to make an object of LinearRegression() class.
+In Linear regression, we must have explanatory variables(Features/Independent) and response variables(Targets/Dependent)
+By convention, features must be of Capital letter, and targets must be of lowercase letter.
+X = pd.DataFrame(new_films, columns=['USD_Production_Budget'])
+y = pd.DataFrame(new_films, columns=['USD_Worldwide_Gross']) 
+Linear regression don't like to take Pandas Series , so we are giving DataFrame to it.
+
+regression.fit(X, y) to create best-fit line
+regression.intercept_ can be used to find the intercept of regression line.
+regression.coef_ can be used to find the coefficient of regression line.
+Coefficient represents the slope of regression line and provides info. about the relationship between independent variable and dependent variable.
+
+R-squared(R^2) is a statistical measure that explains how good is the regression model's regression line to describe the relationship
+between the dependent variable and independent variable.
+In other words, It measures how much of the variablity(changes) in the dependent variable is explained by the independent variable.
+A high R-squared value explains that the regression line fits the data well and explains the variability of dependent variable and
+Captures strong relationship between dependent and independent one.
+A low R-squared value explains that the regression line does not fit the data well and does not explain the variability of dependent variable and
+fails to capture strong relationship between dependent and independent one.
+We can find the R-squared with:
+Syntax:- regression.score(X, y)
+
+revenue_estimate = round(revenue_estimate, -6)
+Here, we have given negative value to second argument.
+As, we know in round(), we give second argument to specify to which places we need to round of the number.
+Postive argument specifies to round off the number after the decimal point.
+Negative argument specifies to round off the number before the decimal point.
+Here, we have given -6 to round off the nearest number to the muliple of (10*6=1 million).
+print(f"The estimated revenue for a $350 film is around ${regression.intercept_[0] + regression.coef_[0][0]*350000000:.10}")
+Here, .10 specifies the number should be displayed to the 10 decimal places.
